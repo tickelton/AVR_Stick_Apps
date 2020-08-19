@@ -1,0 +1,6 @@
+[submodule "micronucleus"]
+	path = micronucleus
+	url = https://github.com/micronucleus/micronucleus
+[submodule "AVR_Stick"]
+	path = AVR_Stick
+	url = https://github.com/sparkfun/AVR_Stick
