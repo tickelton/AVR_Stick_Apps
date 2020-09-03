@@ -4,3 +4,6 @@
 [submodule "AVR_Stick"]
 	path = submodules/AVR_Stick
 	url = https://github.com/sparkfun/AVR_Stick
+[submodule "submodules/v-usb"]
+	path = submodules/v-usb
+	url = https://github.com/obdev/v-usb
