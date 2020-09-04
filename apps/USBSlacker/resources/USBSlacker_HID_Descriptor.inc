@@ -1,0 +1,15 @@
+        db  5h,  1h                ; USAGE_PAGE (Generic Desktop)
+        db  9h,  2h                ; USAGE (Mouse)
+        db a1h,  1h                ; COLLECTION (Application)
+        db  9h,  1h                ;   USAGE (Pointer)
+        db a1h,  0h                ;   COLLECTION (Physical)
+        db  5h,  1h                ;     USAGE_PAGE (Generic Desktop)
+        db  9h, 30h                ;     USAGE (X)
+        db  9h, 31h                ;     USAGE (Y)
+        db 15h, 81h                ;     LOGICAL_MINIMUM (-127)
+        db 25h, 7fh                ;     LOGICAL_MAXIMUM (127)
+        db 75h,  8h                ;     REPORT_SIZE (8)
+        db 95h,  2h                ;     REPORT_COUNT (2)
+        db 81h,  6h                ;     INPUT (Data,Var,Rel)
+        db c0h                     ;     END_COLLECTION
+        db c0h                     ; END_COLLECTION
