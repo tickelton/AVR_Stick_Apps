@@ -10,6 +10,16 @@
 #ifndef __usbconfig_h_included__
 #define __usbconfig_h_included__
 
+/*
+General Description:
+This file is an example configuration (with inline documentation) for the USB
+driver. It configures V-USB for USB D+ connected to Port D bit 2 (which is
+also hardware interrupt 0 on many devices) and USB D- to Port D bit 4. You may
+wire the lines to any other port, as long as D+ is also wired to INT0 (or any
+other hardware interrupt, as long as it is the highest level interrupt, see
+section at the end of this file).
+*/
+
 /* ---------------------------- Hardware Config ---------------------------- */
 
 #define USB_CFG_IOPORTNAME      B
@@ -190,7 +200,7 @@
  * usbFunctionWrite(). Use the global usbCurrentDataToken and a static variable
  * for each control- and out-endpoint to check for duplicate packets.
  */
-#define USB_CFG_HAVE_MEASURE_FRAME_LENGTH   1
+#define USB_CFG_HAVE_MEASURE_FRAME_LENGTH   0
 /* define this macro to 1 if you want the function usbMeasureFrameLength()
  * compiled in. This function can be used to calibrate the AVR's RC oscillator.
  */
@@ -205,12 +215,16 @@
 
 /* -------------------------- Device Description --------------------------- */
 
-#define  USB_CFG_VENDOR_ID       0xc0, 0x16
+#define  USB_CFG_VENDOR_ID       0xc0, 0x16 /* = 0x16c0 = 5824 = voti.nl */
 /* USB vendor ID for the device, low byte first. If you have registered your
  * own Vendor ID, define it here. Otherwise you may use one of obdev's free
  * shared VID/PID pairs. Be sure to read USB-IDs-for-free.txt for rules!
+ * *** IMPORTANT NOTE ***
+ * This template uses obdev's shared VID/PID pair for Vendor Class devices
+ * with libusb: 0x16c0/0x5dc.  Use this VID/PID pair ONLY if you understand
+ * the implications!
  */
-#define  USB_CFG_DEVICE_ID       0xda, 0x27
+#define  USB_CFG_DEVICE_ID       0xda, 0x27 /* VOTI's lab use PID */
 /* This is the ID of the product, low byte first. It is interpreted in the
  * scope of the vendor ID. If you have registered your own VID with usb.org
  * or if you have licensed a PID from somebody else, define it here. Otherwise
@@ -226,6 +240,8 @@
  */
 #define USB_CFG_VENDOR_NAME     't', 'i', 'c', 'k', 'e', 'l', 't', 'o', 'n', '@', 'g', 'm', 'a', 'i', 'l', '.', 'c', 'o', 'm'
 #define USB_CFG_VENDOR_NAME_LEN 19
+//#define USB_CFG_VENDOR_NAME     'o', 'b', 'd', 'e', 'v', '.', 'a', 't'
+//#define USB_CFG_VENDOR_NAME_LEN 8
 /* These two values define the vendor name returned by the USB device. The name
  * must be given as a list of characters under single quotes. The characters
  * are interpreted as Unicode (UTF-16) entities.
@@ -242,6 +258,8 @@
  */
 #define USB_CFG_SERIAL_NUMBER   't', 'i', 'c', 'k', 'e', 'l', 't', 'o', 'n', '@', 'g', 'm', 'a', 'i', 'l', '.', 'c', 'o', 'm', ':', '0', '0', '0', '1'
 #define USB_CFG_SERIAL_NUMBER_LEN   24
+/*#define USB_CFG_SERIAL_NUMBER   'N', 'o', 'n', 'e' */
+/*#define USB_CFG_SERIAL_NUMBER_LEN   0 */
 /* Same as above for the serial number. If you don't want a serial number,
  * undefine the macros.
  * It may be useful to provide the serial number through other means than at
@@ -262,7 +280,7 @@
  * HID class is 3, no subclass and protocol required (but may be useful!)
  * CDC class is 2, use subclass 2 and protocol 1 for ACM
  */
-#define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    35
+#define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    52
 /* Define this to the length of the HID report descriptor, if you implement
  * an HID device. Otherwise don't define it or define it to 0.
  * If you use this define, you must add a PROGMEM character array named
