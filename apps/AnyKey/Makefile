@@ -1,11 +1,13 @@
-DEVICE      = attiny85
+DEVICE     = attiny85
 CLOCK      = 16500000
-PROGRAMMER = -c arduino
+PROGRAMMER = arduino
+TTY        = /dev/ttyUSB0
+BAUDRATE   = 19200
 OBJECTS    = AnyKey.o
 USBDRV     = ../../submodules/v-usb/usbdrv
 SRC        = src
 
-AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
+AVRDUDE = avrdude -c $(PROGRAMMER) -p $(DEVICE) -b $(BAUDRATE) -P $(TTY)
 COMPILE = avr-gcc -Wall -Os -I$(USBDRV) -I$(SRC) -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
 
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o $(SRC)/AnyKey.o
@@ -23,6 +25,12 @@ all: $(SRC)/AnyKey.hex
 
 flash: all
 	$(AVRDUDE) -U flash:w:$(SRC)/AnyKey.hex:i
+
+read_eeprom:
+	$(AVRDUDE) -U eeprom:r:data.eep:r
+
+write_eeprom:
+	$(AVRDUDE) -U eeprom:w:data.eep:r
 
 load: all
 	sudo micronucleus --run $(SRC)/AnyKey.hex

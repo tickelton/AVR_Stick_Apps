@@ -1,20 +1,23 @@
 #include <avr/io.h>
 #include <avr/wdt.h>
+#include <avr/eeprom.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
 #include <avr/pgmspace.h>
 #include "usbdrv.h"
 
-#define PIN_BUTTON PINB3
-#define PORT_BUTTON PB3
-#define DD_BUTTON DDB3
+#define PIN_BUTTON PINB4
+#define PORT_BUTTON PB4
+#define DD_BUTTON DDB4
 
+#define KEY_A           0x04
 #define KEY_ENTER       0x28
 #define KEY_ESC         0x29
 #define KEY_BACKSPACE   0x2a
 #define KEY_TAB         0x2b
 #define KEY_SPACE       0x2c
+#define KEY_MEDIA_CALC  0xfb
 
 // Keycode to be sent on key press
 #define ANYKEY          KEY_ENTER
@@ -81,14 +84,6 @@ static void toggle_led()
 }
 #endif // WITH_LED_DEBUGGING
 
-static void initKeyBuffer(void)
-{
-    keyBuffer.buffer[0] = ANYKEY;
-    keyBuffer.buffer[1] = 0;
-    keyBuffer.buffer[2] = 0xff;
-    keyBuffer.idx = 0;
-}
-
 static void buildReport(void)
 {
     reportBuffer.modifier = 0;
@@ -120,6 +115,24 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
     return 0; // default for not implemented requests: return no data back to host
 }
 
+static uint8_t get_key_press()
+{
+    uint8_t ret;
+
+    cli();
+    ret = key_press;
+    key_press = 0;
+    sei();
+
+    return ret;
+}
+
+static void reset_key_buffer()
+{
+    keyBuffer.idx = 0;
+}
+
+// Timer0 overflow interrupt service routine
 ISR( TIMER0_OVF_vect )
 {
     uint8_t input = PINB & (1 << PIN_BUTTON);
@@ -138,23 +151,45 @@ ISR( TIMER0_OVF_vect )
     }
 }
 
-static uint8_t get_key_press()
+// Initialization functions
+static void initKeyBuffer(void)
 {
-    uint8_t ret;
+    uint8_t keycode;
 
-    cli();
-    ret = key_press;
-    key_press = 0;
-    sei();
+    // Get keycode from EEPROM
+    eeprom_busy_wait();
+    keycode = eeprom_read_byte((uint8_t *)1);
 
-    return ret;
-}
-
-static void reset_key_buffer()
-{
+    if (keycode >= KEY_A && keycode <= KEY_MEDIA_CALC) {
+        // We read a valid keycode from EEPROM
+        keyBuffer.buffer[0] = keycode;
+    } else {
+        // Otherwise use default code
+        keyBuffer.buffer[0] = ANYKEY;
+    }
+    keyBuffer.buffer[1] = 0;
+    keyBuffer.buffer[2] = 0xff;
     keyBuffer.idx = 0;
 }
 
+void initIO(void)
+{
+#ifdef WITH_LED_DEBUGGING
+	DDRB |= 1 << LED1; // output for LED
+#endif
+    DDRB &= ~(1 << DD_BUTTON); // Set key button as input
+    PORTB |= (1 << PORT_BUTTON); // Enable pullup on button pin
+}
+
+void initTimer(void)
+{
+    TIFR &= ~(1 << TOV0); // Clear Timer0 overflow interrupt
+    TIMSK |= (1 << TOIE0); // Enable Timer0 overflow interrupt
+    //TCCR0B |= (1 << CS02); // Start Timer0 with precsaler 256
+    TCCR0B |= (1 << CS02 | 1 << CS00); // Start Timer0 with precsaler 1024
+}
+
+// Main function
 int __attribute__((OS_main)) main(void)
 {
     uchar i;
@@ -163,18 +198,9 @@ int __attribute__((OS_main)) main(void)
     button_counter = 0;
     key_press = 0;
 
-#ifdef WITH_LED_DEBUGGING
-	DDRB |= 1 << LED1; // output for LED
-#endif
-    DDRB &= ~(1 << DD_BUTTON); // Set key button as input
-    PORTB |= (1 << PORT_BUTTON); // Enable pullup on button pin
-
-    TIFR &= ~(1 << TOV0); // Clear Timer0 overflow interrupt
-    TIMSK |= (1 << TOIE0); // Enable Timer0 overflow interrupt
-    //TCCR0B |= (1 << CS02); // Start Timer0 with precsaler 256
-    TCCR0B |= (1 << CS02 | 1 << CS00); // Start Timer0 with precsaler 1024
-
+    initIO();
     initKeyBuffer();
+    initTimer();
 
     wdt_enable(WDTO_1S);
     usbInit();
