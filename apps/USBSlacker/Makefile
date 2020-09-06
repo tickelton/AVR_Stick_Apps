@@ -1,11 +1,13 @@
 DEVICE      = attiny85
 CLOCK      = 16500000
-PROGRAMMER = -c arduino
+PROGRAMMER = arduino
+TTY        = /dev/ttyUSB0
+BAUDRATE   = 19200
 OBJECTS    = USBSlacker.o
 USBDRV     = ../../submodules/v-usb/usbdrv
 SRC        = src
 
-AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
+AVRDUDE = avrdude -c $(PROGRAMMER) -p $(DEVICE) -b $(BAUDRATE) -P $(TTY)
 COMPILE = avr-gcc -Wall -Os -I$(USBDRV) -I$(SRC) -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
 
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o $(SRC)/USBSlacker.o
