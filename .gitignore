@@ -55,3 +55,4 @@ Session.vim
 ctags
 
 apps/*/usbdrv
+Pipfile.lock
