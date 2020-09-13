@@ -1,6 +1,6 @@
 # Name: Makefile
 # Project: Micronucleus
-# License: GNU GPL v2 (see License.txt)
+# License: GNU GPL v2 (see LICENSE_GPL.txt)
 
 # Controller type: ATtiny 85 - 16.5 MHz
 # Configuration:   Default

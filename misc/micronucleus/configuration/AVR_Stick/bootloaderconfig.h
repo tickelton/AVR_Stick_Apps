@@ -5,15 +5,15 @@
  * 
  * Controller type: ATtiny 85 - 16.5 MHz
  * Configuration:   Default configuration
- *       USB D- :   PB3
- *       USB D+ :   PB4
+ *       USB D- :   PB0
+ *       USB D+ :   PB2
  *       Entry  :   Always
  *       LED    :   None
  *       OSCCAL :   Stays at 16 MHz
  * Note: Uses 16.5 MHz V-USB implementation with PLL
  * Last Change:     Mar 16,2014
  *
- * License: GNU GPL v2 (see License.txt
+ * License: GNU GPL v2 (see LICENSE_GPL.txt)
  */
 #ifndef __bootloaderconfig_h_included__
 #define __bootloaderconfig_h_included__

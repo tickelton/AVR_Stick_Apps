@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Copyright (c) 2020 tick <tickelton@gmail.com>
+# SPDX-License-Identifier: ISC
+
 import os
 import sys
 import usb1

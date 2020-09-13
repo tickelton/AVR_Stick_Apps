@@ -1,0 +1,29 @@
+AVR_Stick_Apps
+==============
+
+AVR_Stick_Apps is intended to be a showcase for V-USB[1] on the Atmel
+ATtiny85[2], in particular as used in the Sparkfun AVR_Stick[3].
+
+... more information to follow ...
+
+LICENSE
+-------
+
+All files in this repository that are derivates of, or linked
+with V-USB are distributed under the terms GNU General Public
+License version 2 as published by the Free Software Foundation,
+as required by the licensing conditions of V-USB.
+(See also LICENS_GPL.txt)
+
+All other files, unless specifically noted, are distributed under
+the terms of the ISC license.
+See LICENSE_ISC.txt for details.
+
+Copyright (C) 2020 <tickelton@gmail.com>
+
+----------------------------------------
+
+[1]: https://www.obdev.at/products/vusb/index.html
+[2]: https://www.microchip.com/wwwproducts/en/ATtiny85
+[3]: https://www.sparkfun.com/products/9147
+
