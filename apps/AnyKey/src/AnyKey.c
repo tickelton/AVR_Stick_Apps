@@ -162,7 +162,7 @@ ISR( TIMER0_OVF_vect )
         if (button_counter == 0xFF) {
             button_counter = 3;
             button_state = input;
-            if (!input) { // Negated because button is active high
+            if (!input) { // Negated because button is active low
                 key_press = 1;
             }
         }
