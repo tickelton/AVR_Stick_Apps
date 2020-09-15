@@ -2,9 +2,88 @@ AVR_Stick_Apps
 ==============
 
 AVR_Stick_Apps is intended to be a showcase for V-USB[1] on the Atmel
-ATtiny85[2], in particular as used in the Sparkfun AVR_Stick[3].
+ATtiny85[2], in particular as used in the Sparkfun AVR Stick[3].
 
-... more information to follow ...
+
+Introduction
+------------
+
+The Sparkfun AVR Stick is an development board for the ATtiny85
+microcontroller that plugs directly into an USB port. It only uses
+a hand full of components and provides USB connectivity through
+the V-USB software USB stack.
+
+With the original firmware the AVR Stick acts as a data logging
+device that simulates an USB keyboard and outputs the values
+it reads from its analog-digital converters.
+
+While this functionality is marginally useful it barely scratches
+the surface of what the AVR Stick, or more generally any AVR
+microcontroller with a V-USB stack can do.
+
+Therefore this repository provides several demo applications
+for the AVR Stick, along with some guides on how to set up
+the necessary development environment and install the 
+micronucleus[4] USB bootloader for convenient program upload
+without an additional programmer.
+
+
+Getting started
+---------------
+
+A quick start guide that demonstrates the basic usage of the
+AVR Stick can be found in the file 'Quickstart.txt'.
+
+More detailed information on how to create new applications and
+on some of the more advanced features can be found in 'HOWTO.txt'.
+
+
+Structure of this repository
+----------------------------
+
+AVR_Stick_Apps
+|
+|-apps: Demo applications for the AVR Stick.
+|  |
+|  |-HelloWorld: Just makes a LED blink.
+|  |
+|  |-AnyKey:     A single-button USB keyboard.
+|  |
+|  |-HID-RT:     A HID-receiver-transmitter. Demonstrates how to
+|  |             set up a command line interface over HID feature
+|  |             reports.
+|  |
+|  \_USBSlacker: Simulates a USB mouse that is moved every couple
+|                of minutes so your status in all your collaboration
+|                apps stays on active and your boss doesn't see that
+|                you are slacking off at work ;).
+|
+|-misc:            Various files that are not specific to a
+|  |               particular application.
+|  |
+|  |-micronucleus: Configuration files to make micronucleus work
+|  |               on the AVR Stick.
+|  |
+|  \_v-usb:        hidtool.py, a re-implementation of V-USB libusb
+|                  based HID data transfer tool in Python.
+|
+\_submodules:      References to other git repositories who's code
+   |               is reused here.
+   |
+   |-AVR_Stick:    The original AVR_Stick firmware. The firmware
+   |               itself is not used here, but the repository
+   |               also contains the schematics and documentation
+   |               of the hardware.
+   |
+   |-micronucleus: The micronucleus USB bootloader that can be
+   |               optionally installed on the AVR Stick to get
+   |               rid of the requirement for a additional
+   |               programmer.
+   |
+   \_v-usb:        The V-USB stack used in most of the demo
+                   applications to communicate with the host
+                   computer.
+
 
 LICENSE
 -------
@@ -26,4 +105,5 @@ Copyright (C) 2020 <tickelton@gmail.com>
 [1]: https://www.obdev.at/products/vusb/index.html
 [2]: https://www.microchip.com/wwwproducts/en/ATtiny85
 [3]: https://www.sparkfun.com/products/9147
+[4]: https://github.com/micronucleus/micronucleus
 
