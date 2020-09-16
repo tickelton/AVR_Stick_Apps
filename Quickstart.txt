@@ -1,1 +1,160 @@
-... tbd ...
+AVR_Stick_Apps Quick Start Guide
+================================
+
+
+0. Required Hardware
+--------------------
+
+This guide assumes you have a Sparkfun AVR Stick[1] or a compatible
+device.
+See HOWTO.txt for more information on the Hardware options.
+
+In addition to the AVR Stick hardware itself you will need a
+programmer to initially flash the micronucleus bootloader.
+
+
+1. Required Software
+--------------------
+
+To compile the examples an AVR GCC toolchain is required.
+
+For flashing the firmware we will use avrdude.
+
+On Linux libusb-0.1 is required to build the micronucleus
+command line tool.
+
+This guide uses an Arduino as a programmer[2], therefore you will
+also need the Arduino IDE.
+
+
+2. Getting the sources
+----------------------
+
+ $ git clone --recurse-submodules https://github.com/tickelton/AVR_Stick_Apps.git
+
+Since the AVR_Stick_Apps repository contains references to all the
+third party software we will use in the form of submodules, this
+command gives us access to all the code we will need.
+
+
+3. Building the micronucleus bootloader
+---------------------------------------
+
+ $ cd AVR_Stick_Apps
+ $ make bootloader
+
+   Building Micronucleus configuration: AVR_Stick
+   Size of sections:
+      text    data     bss     dec     hex filename
+      1588       0      44    1632     660 main.bin
+   Size of binary hexfile. Use the data size to calculate the bootloader address:
+      text    data     bss     dec     hex filename
+         0    1588       0    1588     634 main.hex
+
+This command should leave you with the compiled bootloader in the
+file 'AVR_Stick_Apps/submodules/micronucleus/firmware/main.hex'.
+
+
+2. Installing the micronucleus bootloader
+-----------------------------------------
+
+First we need to set the fuses of the ATtiny85 correctly.
+The following command assumes that an Arduino with the ArduinoISP
+sketch is used as a programmer. Otherwise you need to adapt the
+programmer parameters according to your setup.
+
+ $ avrdude -p attiny85 -b 19200 -c arduino -P /dev/ttyUSB0 -U lfuse:w:0xe1:m -U hfuse:w:0xdd:m -U efuse:w:0xfe:m
+
+After that we can flash the actual bootloader:
+
+ $ cd AVR_Stick_Apps/submodules/micronucleus/firmware/
+ $ avrdude -p attiny85 -b 19200 -c arduino -P /dev/ttyUSB0 -U flash:w:main.hex
+
+
+3. Building the USBSlacker app
+------------------------------
+
+ $ cd AVR_Stick_Apps
+ $ make USBSlacker
+   ...
+   AVR Memory Usage
+   ----------------
+   Device: attiny85
+
+   Program:    2040 bytes (24.9% Full)
+   (.text + .data + .bootloader)
+
+   Data:         67 bytes (13.1% Full)
+   (.data + .bss + .noinit)
+   ...
+
+Now you should have the compiled binary for the app in
+AVR_Stick_Apps/apps/USBSlacker/src/USBSlacker.hex
+
+
+4. Building the micronucleus command line tool
+----------------------------------------------
+
+On Windows you can skip this step as micronucleus comes
+with a pre-compiled binary for Windows in:
+AVR_Stick_Apps/submodules/micronucleus/commandline/builds/Windows/micronucleus.exe
+
+On Linux you can build the tool with the following command:
+
+ $ cd AVR_Stick_Apps
+ $ make micronucleus
+
+This results in the following file:
+AVR_Stick_Apps/submodules/micronucleus/commandline/micronucleus
+
+
+5. Flashing the app using micronucleus
+--------------------------------------
+
+Now you have all the necessary components to flash the newly built
+app to your AVR Stick.
+
+With the AVR Stick _NOT_ plugged in run the following commands:
+
+ $ cd AVR_Stick_Apps
+ $ sudo ./submodules/micronucleus/commandline/micronucleus --run apps/USBSlacker/src/USBSlacker.hex
+   > Please plug in the device ...
+   > Press CTRL+C to terminate the program.
+
+The plug in the AVR Stick and the app will get flashed to the device:
+
+   > Device is found!
+   connecting: 33% complete
+   > Device has firmware version 2.4
+   > Device signature: 0x1e930b
+   > Available space for user applications: 6522 bytes
+   > Suggested sleep time between sending pages: 7ms
+   > Whole page count: 102  page size: 64
+   > Erase function sleep duration: 714ms
+   parsing: 50% complete
+   > Erasing the memory ...
+   erasing: 66% complete
+   > Starting to upload ...
+   writing: 83% complete
+   > Starting the user app ...
+   running: 100% complete
+   >> Micronucleus done. Thank you!
+
+After 5 seconds the AVR Stick will automatically reboot into the newly
+flashed app.
+
+
+6. Enjoy
+--------
+
+At this point you have successfully turned your AVR Stick into an
+USB mouse emulator that will wiggle the cursor every couple of minutes.
+
+You can now try to also build and flash the other demo apps or
+dive into HOWTO.txt to find out how to create your own ones.
+
+
+---------------------------------------------------------------------
+
+[1]: https://www.sparkfun.com/products/retired/9147
+[2]: https://www.arduino.cc/en/Tutorial/ArduinoISP

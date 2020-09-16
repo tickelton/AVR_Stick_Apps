@@ -1,1 +1,79 @@
+AVR_Stick_Apps Quick Start Guide
+================================
+
+... THIS STILL IS A WORK IN PROGRESS !!! ...
+
+
+0. Required Hardware
+--------------------
+
+This guide assumes you have a Sparkfun AVR Stick[1] or a compatible
+device.
+At the time of writing the AVR Stick is no longer available from
+Sparkfun directly. There are some vendors who sell compatible clones.
+Alternatively you can use the EAGLE[2] files provided by Sparkfun[3]
+and have your own PCBs manufactures or you can even recreate the
+necessary circuit on a breadboard. See HOWTO.txt for more information
+on the Hardware options.
+
+In addition to the AVR Stick hardware itself you will need a
+programmer to flash the firmware or at least to initially flash the
+micronucleus bootloader if you choose to use it.
+One option would be to use and Arduino as a programmer for the
+ATtiny[4].
+
+
+1. Setting up the development environment
+-----------------------------------------
+
+To compile the examples avr-gcc and avr-libc are required.
+
+For flashing the firmware we will use avrdude.
+
+If you want to use an Arduino as a programmer, you will also
+need the Arduino IDE.
+
+1.1 Installation on Linux
+-------------------------
+
+The Arduino IDE (if required) can be downloaded from:
+https://www.arduino.cc/en/Main/Software
+
+All the other required software should be available as
+packages from your Linux distribution.
+
+On Ubuntu the following command will install the
+necessary packages:
+
+ $ sudo apt-get install gcc-avr avr-libc avrdude binutils-avr
+
+
+1.2 Installation on Windows
+---------------------------
+
+The Arduino IDE (if required) can be downloaded from:
+https://www.arduino.cc/en/Main/Software
+
+Please see [5] for instructions on how to install the other
+required software on Windows 10.
+
+
+2. Installing the micronucleus bootloader
+-----------------------------------------
+
+To be able to update the firmware on the AVR Stick without
+needing a separate programmer every time, we are going
+to use the micronucleus[6] bootloader.
+
+
 ... tbd ...
+
+
+---------------------------------------------------------------------
+
+[1]: https://www.sparkfun.com/products/retired/9147
+[2]: https://www.autodesk.com/products/eagle/overview
+[3]: https://github.com/sparkfun/AVR_Stick/tree/master/Hardware
+[4]: https://www.arduino.cc/en/Tutorial/ArduinoISP
+[5]: http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html
+[6]: https://github.com/micronucleus/micronucleus
