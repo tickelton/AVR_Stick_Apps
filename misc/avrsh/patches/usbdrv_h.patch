@@ -1,0 +1,21 @@
+--- a/usbdrv/usbdrv.h	2020-09-19 11:16:54.970257001 +0200
++++ b/usbdrv/usbdrv.h	2020-09-17 20:27:05.656737082 +0200
+@@ -10,6 +10,9 @@
+ #ifndef __usbdrv_h_included__
+ #define __usbdrv_h_included__
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
+ /*
+ Hardware Prerequisites:
+ =======================
+@@ -766,5 +769,8 @@
+ #define USBRQ_HID_SET_PROTOCOL  0x0b
+ 
+ /* ------------------------------------------------------------------------- */
++#ifdef __cplusplus
++} // extern "C"
++#endif
+ 
+ #endif /* __usbdrv_h_included__ */

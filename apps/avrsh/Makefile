@@ -10,6 +10,7 @@ USBDRV     = ../../submodules/v-usb/usbdrv
 FORMAT = ihex
 TARGET = avrsh
 OBJDIR = obj
+USBDRVDIR = $(OBJDIR)/usbdrv
 SRC = usbdrv/oddebug.c usbdrv/usbdrv.c
 
 CPPSRC =  common.cpp shell.cpp progmem.cpp \
@@ -19,7 +20,7 @@ ASRC = usbdrv/usbdrvasm.S
 OPT = s
 DEBUG = dwarf-2
 
-EXTRAINCDIRS = 
+EXTRAINCDIRS = usbdrv
 #CSTANDARD = -std=gnu99
 
 # Place -D or -U options here for C sources
@@ -233,6 +234,7 @@ build: elf hex eep lss sym eee
 
 usbdrv:
 	cp -r $(USBDRV) usbdrv
+	patch -p1 < ../../misc/avrsh/patches/usbdrv_h.patch
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
@@ -434,6 +436,7 @@ clean_list :
 	@echo $(MSG_CLEANING)
 	$(REMOVE) $(TARGET).hex
 	$(REMOVE) $(TARGET).eep
+	$(REMOVE) $(TARGET).eee
 	$(REMOVE) $(TARGET).cof
 	$(REMOVE) $(TARGET).elf
 	$(REMOVE) $(TARGET).map
@@ -441,6 +444,9 @@ clean_list :
 	$(REMOVE) $(TARGET).lss
 	$(REMOVE) $(CPPSRC:%.cpp=$(OBJDIR)/%.o)
 	$(REMOVE) $(CPPSRC:%.cpp=$(OBJDIR)/%.lst)
+	$(REMOVE) $(SRC:%.c=$(OBJDIR)/%.o)
+	$(REMOVE) $(ASRC:%.S=$(OBJDIR)/%.o)
+	$(REMOVE) $(ASRC:%.S=$(OBJDIR)/%.lst)
 	$(REMOVE) $(CPPSRC:.cpp=.s)
 	$(REMOVE) $(CPPSRC:.cpp=.d)
 	$(REMOVE) $(CPPSRC:.cpp=.i)
@@ -450,6 +456,7 @@ clean_list :
 
 # Create object files directory
 $(shell mkdir $(OBJDIR) 2>/dev/null)
+$(shell mkdir $(USBDRVDIR) 2>/dev/null)
 
 
 # Include the dependency files.

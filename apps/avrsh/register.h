@@ -26,7 +26,7 @@ public:
 	static void		WriteRegister(uint8 * reg);
 
 private:
-	static RegisterVars Registers[];
+	static const RegisterVars Registers[];
 	
 	static char *	getRegNameFromPgmSpace(uint8);
 

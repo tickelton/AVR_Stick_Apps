@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
             if len(sys.argv) > 1:
                 buf = ' '.join(sys.argv[1:]).encode()
-                print('send: buf = "%s" len = %d', (buf, len(buf)))
+                #print('send: buf = "%s" len = %d', (buf, len(buf)))
                 sent = handle.controlWrite(
                     REQUEST_TYPE_CLASS | RECIPIENT_DEVICE | ENDPOINT_OUT,
                     9,
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
                 while True:
                     buf = handle.controlRead(REQUEST_TYPE_CLASS | RECIPIENT_DEVICE | ENDPOINT_IN, 1, 3<<8 | 0, 0, 32, 2000)
-                    print('recv: buf = "%s" len = %d', (buf, len(buf)))
+                    #print('recv: buf = "%s" len = %d', (buf, len(buf)))
                     if len(buf) == 0:
                         break
                     else:
