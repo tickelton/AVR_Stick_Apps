@@ -1,19 +1,21 @@
 
 # MCU name
-MCU = atmega328p
+MCU = attiny85
 
 # CHECKME uncomment the one below for Arduino and comment out the other one
-F_CPU = 16000000
+F_CPU = 16500000
 #F_CPU = 20000000
+USBDRV     = ../../submodules/v-usb/usbdrv
 
 FORMAT = ihex
 TARGET = avrsh
 OBJDIR = obj
-SRC = 
+SRC = usbdrv/oddebug.c usbdrv/usbdrv.c
 
-CPPSRC =  common.cpp rbuff.cpp uart.cpp shell.cpp progmem.cpp \
-		  register.cpp script.cpp main.cpp
+CPPSRC =  common.cpp shell.cpp progmem.cpp \
+		  register.cpp main.cpp
 ASRC =
+ASRC = usbdrv/usbdrvasm.S
 OPT = s
 DEBUG = dwarf-2
 
@@ -45,6 +47,7 @@ CPPFLAGS += -Wundef
 CPPFLAGS += -ffunction-sections
 CPPFLAGS += -fdata-sections
 CPPFLAGS += -fno-threadsafe-statics
+CPPFLAGS += -fpermissive
 #CPPFLAGS += -Wstrict-prototypes
 #CPPFLAGS += -Wunreachable-code
 CPPFLAGS += -Wsign-compare
@@ -222,12 +225,14 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Default target.
-all: begin gccversion sizebefore build sizeafter end
+all: begin usbdrv gccversion sizebefore build sizeafter end
 
 # Change the build target to build a HEX file or a library.
 build: elf hex eep lss sym eee
 #build: lib
 
+usbdrv:
+	cp -r $(USBDRV) usbdrv
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
@@ -439,6 +444,7 @@ clean_list :
 	$(REMOVE) $(CPPSRC:.cpp=.s)
 	$(REMOVE) $(CPPSRC:.cpp=.d)
 	$(REMOVE) $(CPPSRC:.cpp=.i)
+	$(REMOVEDIR) usbdrv
 	$(REMOVEDIR) .dep
 
 

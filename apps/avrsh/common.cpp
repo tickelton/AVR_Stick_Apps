@@ -10,30 +10,13 @@
 #include <stdlib.h>
 #include "progmem.h"
 
-PortPin	PortPins[] = {
+const PortPin	PortPins[] = {
 	{ &PORTB, &DDRB, PINB0, pmPB0},
 	{ &PORTB, &DDRB, PINB1,  pmPB1},
 	{ &PORTB, &DDRB, PINB2,  pmPB2},
 	{ &PORTB, &DDRB, PINB3,  pmPB3},
 	{ &PORTB, &DDRB, PINB4,  pmPB4},
 	{ &PORTB, &DDRB, PINB5,  pmPB5},
-	{ &PORTB, &DDRB, PINB6,  pmPB6},
-	{ &PORTB, &DDRB, PINB7,  pmPB7},
-	{ &PORTC, &DDRC, PINC0,  pmPC0},
-	{ &PORTC, &DDRC, PINC1,  pmPC1},
-	{ &PORTC, &DDRC, PINC2,  pmPC2},
-	{ &PORTC, &DDRC, PINC3, pmPC3},
-	{ &PORTC, &DDRC, PINC4,  pmPC4},
-	{ &PORTC, &DDRC, PINC5,  pmPC5},
-	{ &PORTC, &DDRC, PINC6,  pmPC6},
-	{ &PORTD, &DDRD, PIND0,  pmPD0},
-	{ &PORTD, &DDRD, PIND1,  pmPD1},
-	{ &PORTD, &DDRD, PIND2,  pmPD2},
-	{ &PORTD, &DDRD, PIND3,  pmPD3},
-	{ &PORTD, &DDRD, PIND4,  pmPD4},
-	{ &PORTD, &DDRD, PIND5,  pmPD5},
-	{ &PORTD, &DDRD, PIND6,  pmPD6},
-	{ &PORTD, &DDRD, PIND7,  pmPD7}
 };
 
 uint8_t

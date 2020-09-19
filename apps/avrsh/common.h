@@ -8,7 +8,7 @@
 /// $Id: common.h,v 1.6 2009/09/05 04:06:17 gian Exp $
 ////////////////////////////////////////////////////////////////////////////
 #ifndef F_CPU
-#define F_CPU 16000000
+#define F_CPU 16500000
 #endif
 #include <avr/io.h>
 #include <util/delay.h>
@@ -20,9 +20,9 @@
 //////// USART
 #define PRESCALER		1024
 #define CHECK_TIME		( (F_CPU / PRESCALER) / 4 )				// 250 ms
-#define StartTimer()	BSET(TCCR1B,CS10), BSET(TCCR1B,CS12)	// 1024 prescaler
-#define StopTimer()		BCLR(TCCR1B,CS10), BCLR(TCCR1B,CS12)
-#define ClearTimer()	(TCNT1 = 0)
+//#define StartTimer()	BSET(TCCR1B,CS10), BSET(TCCR1B,CS12)	// 1024 prescaler
+//#define StopTimer()		BCLR(TCCR1B,CS10), BCLR(TCCR1B,CS12)
+//#define ClearTimer()	(TCNT1 = 0)
 //////// SPI
 #define StartSPITimer()	BSET(TCCR2B,CS20), BSET(TCCR2B,CS22)
 #define StopSPITimer()	BCLR(TCCR2B,CS20), BCLR(TCCR2B,CS22)
@@ -69,29 +69,6 @@
 #define PIN6	6
 #define PIN7	7
 
-#define PB0		0
-#define PB1		1
-#define PB2		2
-#define PB3		3
-#define PB4		4
-#define PB5		5
-#define PB6		6
-#define PB7		7
-#define PC0		8
-#define PC1		9
-#define PC2		10
-#define PC3		11
-#define PC4		12
-#define PC5		13
-#define PC6		14
-#define PD0		15
-#define PD1		16
-#define PD2		17
-#define PD3		18
-#define PD4		19
-#define PD5		20
-#define PD6		21
-#define PD7		22
 #define NUM_PINS 23
 
 // Typedefs for shorthand
@@ -111,7 +88,7 @@ typedef struct
 	
 } PortPin;
 
-extern PortPin	PortPins[] PROGMEM;
+extern const PortPin	PortPins[] PROGMEM;
 
 
 // C++ Sanity Wrappers
@@ -139,8 +116,8 @@ extern char const __attribute__((__progmem__)) *  conMessages[];
 // Utility functions
 uint8_t StringCopy(char *, const char *);
 
-extern void WriteLine(const char *, uint8 = 1);
-extern void WriteRAM(const char *, uint8 = 1);
+extern void WriteLine(const char *);
+extern void WriteRAM(const char *);
 class ScriptEngine;
 extern ScriptEngine & appGetScriptEngine();
 

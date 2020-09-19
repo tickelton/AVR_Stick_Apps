@@ -7,7 +7,6 @@
 // $Id: shell.cpp,v 1.7 2009/09/05 04:06:17 gian Exp $
 ////////////////////////////////////////////////////////////////////////////
 #include "shell.h"
-#include "rbuff.h"
 #include <string.h>
 #include <avr/boot.h>
 #include <avr/power.h>
@@ -16,7 +15,6 @@
 #include "progmem.h"
 
 #define MAX_ARGS	6
-#define MAX_PASSWD	12
 #define WHITE_SPACE " \r\t\n"
 
 static char		buff[40];
@@ -25,13 +23,12 @@ static uint8 * 	getPortByName(char *);
 static uint8	getPinByName(char *);
 static uint8 *	getDDRByName(char *);
 
-char ee_passwd[MAX_PASSWD] EEMEM;
 
 uint8 * getDDRByName(char * pin)
 {
 	for(uint8 i = 0; i < NUM_PINS; i++)
 	{
-		PortPin * ppp = &PortPins[i];
+		const PortPin * ppp = &PortPins[i];
 		char * pname = (char*)pgm_read_word(&ppp->name);
 		if (!strcasecmp_P(pin,pname)) {
 			return (uint8*)pgm_read_word(&ppp->ddr);
@@ -43,7 +40,7 @@ uint8* getPortByName(char * pin)
 {
 	for(uint8 i = 0; i < NUM_PINS; i++)
 	{
-		PortPin * ppp = &PortPins[i];
+		const PortPin * ppp = &PortPins[i];
 		char * pname = (char*)pgm_read_word(&ppp->name);
 		if (!strcasecmp_P(pin,pname))
 			return (uint8*)pgm_read_word(&ppp->port);
@@ -55,7 +52,7 @@ uint8 getPinByName(char * pin)
 {
 	for (uint8 i = 0; i < NUM_PINS; i++)
 	{
-		PortPin * ppp = &PortPins[i];
+		const PortPin * ppp = &PortPins[i];
 		char * pname = (char*)pgm_read_word(&ppp->name);
 		if (!strcasecmp_P(pin,pname))
 			return (uint8)pgm_read_byte(&ppp->pin);
@@ -68,12 +65,6 @@ AVRShell::cmdPowerUp(char ** args)
 {
 	if (!strcmp(*args,"adc")) {
 		power_adc_enable();
-	} else if (!strcmp(*args,"spi")) {
-		power_spi_enable();
-	} else if (!strcmp(*args,"uart")) {
-		power_usart0_enable();
-	} else if (!strcmp(*args,"twi")) {
-		power_twi_enable();
 	} else if (!strcmp(*args,"all")) {
 		power_all_enable();
 	}
@@ -86,12 +77,6 @@ AVRShell::cmdPowerDown(char ** args)
 {
 	if (!strcmp(*args,"adc")) {
 		power_adc_disable();
-	} else if (!strcmp(*args,"spi")) {
-		power_spi_disable();
-	} else if (!strcmp(*args,"uart")) {
-		power_usart0_disable();
-	} else if (!strcmp(*args,"twi")) {
-		power_twi_disable();
 	} else if (!strcmp(*args,"all")) {
 		power_all_disable();
 	}
@@ -100,29 +85,9 @@ AVRShell::cmdPowerDown(char ** args)
 }
 
 void
-AVRShell::cmdPasswd(char ** args)
-{
-	char passwd[MAX_PASSWD];
-	eeprom_read_block((void*)&passwd,(const void*)ee_passwd,MAX_PASSWD);
-	if (passwd[0] == 0xFF) {
-		eeprom_write_block((const void*)args[0],(void*)ee_passwd,MAX_PASSWD);
-		WriteLine(PSTR("Wrote root password to EEPROM\r\n"));
-	} else if (bIsAuthorized) {
-		eeprom_write_block((const void*)args[0],(void*)ee_passwd,MAX_PASSWD);
-		WriteLine(PSTR("Wrote NEW root password to EEPROM\r\n"));
-	} else
-		WriteLine(PSTR("You must authorize yourself first.\r\n"));
-}
-
-void
 AVRShell::cmdSet(char ** args)
 {
-	if (!strcmp(*args,"root")) {
-		char passwd[MAX_PASSWD];
-		memset(passwd,0xFF,MAX_PASSWD);
-		eeprom_write_block((const void*)&passwd,(void*)ee_passwd,MAX_PASSWD);
-		WriteLine(PSTR("Erased root password.\r\n"));
-	} if (!strcmp(*args,"pin")) {
+       	if (!strcmp(*args,"pin")) {
 		uint8 * ddr = getDDRByName(args[1]);
 		if (!strcmp(args[2],"output")) {
 			BSET(*ddr,getPinByName(args[1]));
@@ -132,20 +97,6 @@ AVRShell::cmdSet(char ** args)
 		sprintf_P(buff,PSTR("Set %s for %s\r\n"), args[1],args[2]);
 		WriteRAM(buff);
 	}
-}
-
-void
-AVRShell::cmdAuth(char ** args)
-{
-	char passwd[MAX_PASSWD];
-	eeprom_read_block(passwd,(const void*)ee_passwd,MAX_PASSWD);
-	if (passwd[0] == 0xFF) {
-		WriteLine(PSTR("No password set. Use \'passwd\'\r\n"));
-	} else if (!strcmp(passwd,*args)) {
-		bIsAuthorized = 1;
-		WriteLine(PSTR("Authorized.\r\n"));
-	} else
-		WriteLine(PSTR("That password is not correct.\r\n"));
 }
 
 void
@@ -178,17 +129,17 @@ AVRShell::cmdTimer(char ** args)
 {
 	if (!strcmp(*args,"start")) {
 		timect = 0;
-		BSET(TCCR0B,CS00);
-		BSET(TCCR0B,CS02);
-		BSET(TCCR0A,WGM01);
-		BSET(TIMSK0,OCIE0A);
+//		BSET(TCCR0B,CS00);
+//		BSET(TCCR0B,CS02);
+//		BSET(TCCR0A,WGM01);
+//		BSET(TIMSK0,OCIE0A);
 		OCR0A = 156;
 		WriteLine(PSTR("Started timer.\r\n"));
 	} else if (!strcmp(*args,"stop")) {
-		BCLR(TCCR0B,CS10);
-		BCLR(TCCR0B,CS12);
-		BCLR(TIMSK0,OCIE0A);
-		TCNT0 = 0;
+//		BCLR(TCCR0B,CS10);
+//		BCLR(TCCR0B,CS12);
+//		BCLR(TIMSK0,OCIE0A);
+//		TCNT0 = 0;
 		sprintf_P(buff,PSTR("Elapsed time: ~ %d seconds\r\n"),timeSec);
 		WriteRAM(buff);
 		timeSec = 0;
@@ -204,36 +155,6 @@ AVRShell::cmdFCPU()
 
 
 void
-AVRShell::cmdHelp()
-{
-	out->WriteLine(helpmenu1);
-	out->WriteLine(helpmenu2);
-	out->WriteLine(helpmenu3);
-	out->WriteLine(helpmenu4);
-	out->WriteLine(helpmenu4_1);
-	out->WriteLine(helpmenu5);
-	out->WriteLine(helpmenu6);
-	out->WriteLine(helpmenu7);
-	out->WriteLine(helpmenu7_5);
-	out->WriteLine(helpmenu8);
-	out->WriteLine(helpmenu9);
-	out->WriteLine(helpmenu10);
-	out->WriteLine(helpmenu11);
-	out->WriteLine(helpmenu12);
-	out->WriteLine(helpmenu13);
-	out->WriteLine(helpmenu14);
-	out->WriteLine(helpmenu15);
-	out->WriteLine(helpmenu16);
-	out->WriteLine(helpmenu16_1);
-	out->WriteLine(helpmenu17);
-	out->WriteLine(helpmenu18);
-	out->WriteLine(helpmenu19);
-	out->WriteLine(helpmenu20);
-	WriteLine(helpmenu21,0);
-	WriteLine(endl);
-}
-
-void
 AVRShell::cmdRead(char ** args)
 {
 	if (!strcmp(*args,"pin")) 
@@ -246,20 +167,6 @@ AVRShell::cmdRead(char ** args)
 		if (*port == PORTB)
 		{
 			if (BCHK(PINB,getPinByName(args[1])))
-				sprintf_P(buff,strCmdRead1,args[1]);
-			else
-				sprintf_P(buff,strCmdRead2,args[1]);
-			WriteRAM(buff);
-		} else if (*port == PORTC)
-		{
-			if (BCHK(PINC,getPinByName(args[1])))
-				sprintf_P(buff,strCmdRead1,args[1]);
-			else
-				sprintf_P(buff,strCmdRead2,args[1]);
-			WriteRAM(buff);
-		} else if (*port == PORTD)
-		{
-			if (BCHK(PIND,getPinByName(args[1])))
 				sprintf_P(buff,strCmdRead1,args[1]);
 			else
 				sprintf_P(buff,strCmdRead2,args[1]);
@@ -331,8 +238,10 @@ AVRShell::cmdEna(char ** args)
 	
 		sprintf_P(buff,pmEnaSvc,args[0]);
 		WriteRAM(buff);
-	}  else
+	}  else {
+		sprintf_P(buff,pmUnkCmd,args[0]);
 		WriteLine(pmUnkCmd);
+    }
 
 }
 
@@ -340,11 +249,7 @@ AVRShell::cmdEna(char ** args)
 uint8
 AVRShell::ExecCmd(char * c, char ** args)
 {
-	if ( !strcmp_P(c,pmCat) || !strcmp_P(c,pmEcho) )
-		script->parseEcho(args);
-	else if (!strcmp_P(c,pmHelp) || !strcmp_P(c,pmMenu))
-		cmdHelp();
-	else if (!strcmp_P(c,pmEna))
+	if (!strcmp_P(c,pmEna))
 		cmdEna(args);
 	else if (!strcmp_P(c,pmRead))
 		cmdRead(args);
@@ -356,25 +261,13 @@ AVRShell::ExecCmd(char * c, char ** args)
 		cmdFCPU();
 	else if (!strcmp_P(c,pmTimer))
 		cmdTimer(args);
-	else if (!strcmp_P(c,pmAuth))
-		cmdAuth(args);
-	else if (!strcmp_P(c,pmPasswd))
-		cmdPasswd(args);
-	else if (!strcmp_P(c,pmPrint))
-		script->parsePrint(args);
-	else if (c[0] == '$')
-		script->parseVar(c,args);
 	else if (!strcmp(c,"clock"))
 		cmdClock(args);
 	else if (!strcmp_P(c,pmPowerup))
 		cmdPowerUp(args);
 	else if (!strcmp_P(c,pmPowerdown))
 		cmdPowerDown(args);
-	else if (c[0] == '%') {
-		script->parseRegister(c,args);
-	} else if (c[0] == ':') {
-		script->Interpret(c,args);
-	} else {
+       	else {
 		sprintf_P(buff,pmUnkCmd,c);
 		WriteRAM(buff);
 	}
