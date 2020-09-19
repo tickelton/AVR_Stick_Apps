@@ -47,6 +47,13 @@ AVR_Stick_Apps
 |  |
 |  |-HelloWorld: Just makes a LED blink.
 |  |
+|  |-avrsh:      A port of Barry Gian James' avrsh[5] to the AVR
+|  |             Stick.
+|  |             Note: Due to the size of the app, it can not be
+|  |                   used in combination with micronucleus and
+|  |                   has to be flashed using a dedicated
+|  |                   programmer!
+|  |
 |  |-AnyKey:     A single-button USB keyboard.
 |  |
 |  |-HID-RT:     A HID-receiver-transmitter. Demonstrates how to
@@ -63,6 +70,9 @@ AVR_Stick_Apps
 |  |
 |  |-micronucleus: Configuration files to make micronucleus work
 |  |               on the AVR Stick.
+|  |
+|  |-avrsh:        avrsh.py, a terminal client application for
+|  |               the avrsh firmware.
 |  |
 |  \_v-usb:        hidtool.py, a re-implementation of V-USB libusb
 |                  based HID data transfer tool in Python.
@@ -106,4 +116,4 @@ Copyright (C) 2020 <tickelton@gmail.com>
 [2]: https://www.microchip.com/wwwproducts/en/ATtiny85
 [3]: https://www.sparkfun.com/products/9147
 [4]: https://github.com/micronucleus/micronucleus
-
+[5]: https://www.instructables.com/id/AVRSH-A-Command-Interpreter-Shell-for-ArduinoAVR/
