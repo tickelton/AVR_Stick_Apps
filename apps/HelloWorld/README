@@ -1,0 +1,42 @@
+HelloWorld
+==========
+
+The HelloWorld app is your typical microcontroller hello world
+application that blinks a single LED.
+
+
+Hardware
+--------
+
+The app uses the AVR Stick's LED connected to PB3. 
+On the original Sparkfun AVR Stick this is the yellow LED
+referred to as LED4.
+
+
+Firmware
+--------
+
+A pre-compiled binary for the AVR Stick can be fount
+in HelloWorld.hex.
+
+To compile the firmware yourself simply run make in the HelloWorld
+directory:
+
+ $ make
+
+   avr-gcc -Wall -Os -DF_CPU=16500000 -mmcu=attiny85 -c HelloWorld.c -o HelloWorld.o
+   avr-gcc -Wall -Os -DF_CPU=16500000 -mmcu=attiny85 -o HelloWorld.elf HelloWorld.o
+   rm -f HelloWorld.hex
+   avr-objcopy -j .text -j .data -O ihex HelloWorld.elf HelloWorld.hex
+   avr-size --format=avr --mcu=attiny85 HelloWorld.elf
+   AVR Memory Usage
+   ----------------
+   Device: attiny85
+   
+   Program:      98 bytes (1.2% Full)
+   (.text + .data + .bootloader)
+   
+   Data:          0 bytes (0.0% Full)
+   (.data + .bss + .noinit)
+
+

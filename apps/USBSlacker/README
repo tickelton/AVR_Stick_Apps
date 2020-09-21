@@ -1,0 +1,65 @@
+USBSlacker
+==========
+
+USBSlacker simulates an USB mouse that is moved every 4 minutes.
+
+The purpose of this app is:
+
+a) To demonstrate how to use V-USB to create a USB HID device.
+b) To prevent  all kind of applications like Outlook, Skype,
+   Jabber, etc. from setting your status to idle or away due
+   to a lack of activity so your boss doesn't see that you
+   are slacking off at work ;).
+
+
+Hardware
+--------
+
+The app runs on an unmodified AVR Stick. The functionality
+is implemented entirely in software and no additional
+hardware is required.
+
+
+Firmware
+--------
+
+The Firmware uses a generic HID descriptor for a 3 button
+mouse with a scroll wheel.
+
+The button and wheel inputs are not used. Only the X and Y
+inputs are used to move the cursor in a 5 pixel square every
+4 minutes.
+
+The range of 5 pixels was chosen as it is enough to trigger
+the activity detection of all common desktop applications
+but still unobtrusive enough so that an USBSlacker device
+can stay plugged in permanently without interfering with
+regular usage of the computer.
+
+
+A pre-compiled binary for the AVR Stick can be fount
+at src/USBSlacker.hex.
+
+To compile the firmware yourself simply run make in the USBSlacker
+directory:
+
+ $ make
+
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c usbdrv/usbdrv.c -o usbdrv/usbdrv.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -x assembler-with-cpp -c usbdrv/usbdrvasm.S -o usbdrv/usbdrvasm.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c usbdrv/oddebug.c -o usbdrv/oddebug.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c src/USBSlacker.c -o src/USBSlacker.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -o src/USBSlacker.elf usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o src/USBSlacker.o
+   rm -f src/USBSlacker.hex
+   avr-objcopy -j .text -j .data -O ihex src/USBSlacker.elf src/USBSlacker.hex
+   avr-size --format=avr --mcu=attiny85 src/USBSlacker.elf
+   AVR Memory Usage
+   ----------------
+   Device: attiny85
+   
+   Program:    2026 bytes (24.7% Full)
+   (.text + .data + .bootloader)
+   
+   Data:         75 bytes (14.6% Full)
+   (.data + .bss + .noinit)
+

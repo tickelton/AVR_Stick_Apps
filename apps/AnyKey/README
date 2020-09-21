@@ -1,0 +1,61 @@
+AnyKey
+======
+
+The AnyKey app acts as a USB keyboard with a single button (the
+eponymous AnyKey).
+
+
+Hardware
+--------
+
+For triggering key events a push button connecting PB4 on the
+AVR Stick to ground is required. See resources/AnyKey_schematic.png
+for a schematic diagram.
+
+
+Firmware
+--------
+
+A pre-compiled binary for the AVR Stick can be fount
+at src/AnyKey.hex.
+
+To compile the firmware yourself simply run make in the AnyKey
+directory:
+
+ $ make
+
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c src/AnyKey.c -o src/AnyKey.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -o src/AnyKey.elf usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o src/AnyKey.o
+   rm -f src/AnyKey.hex
+   avr-objcopy -j .text -j .data -O ihex src/AnyKey.elf src/AnyKey.hex
+   avr-size --format=avr --mcu=attiny85 src/AnyKey.elf
+   AVR Memory Usage
+   ----------------
+   Device: attiny85
+   
+   Program:    2040 bytes (24.9% Full)
+   (.text + .data + .bootloader)
+   
+   Data:         67 bytes (13.1% Full)
+   (.data + .bss + .noinit)
+
+
+Configuration
+-------------
+
+The default behavior of the firmware is to send the key code for
+the Enter key when the button is pressed.
+
+The key code to be used is read from the second byte in the EEPROM.
+This way the code to be sent can be configured without the need
+to change the firmware by writing a different value to the EEPROM.
+
+The following command uses the terminal mode of avrdude to set
+byte 0x01 in the EEPROM to 0x29 which is the key code 'Escape':
+
+$ avrdude -p attiny85 -b 19200 -c arduino -P /dev/ttyUSB0 -t << END
+write eeprom 0x01 0x29
+quit
+END
+
+
