@@ -1,79 +1,130 @@
 AVR_Stick_Apps Quick Start Guide
 ================================
 
-... THIS STILL IS A WORK IN PROGRESS !!! ...
+
+1. Hardware Alternatives
+------------------------
+
+While this repository was created mainly with the
+Sparkfun AVR Stick[1] in mind most of the software will work
+with practically any ATtiny85 board.
+
+Depending on the particular configuration of your board you
+will have to set the pins used for the USB connection and
+the CPU frequency accordingly. All other information should
+apply without change.
+
+One readily available alternative to the AVR Stick would be the
+Digistump Digispark[2].
+If you choose to use a Digispark or a compatible device, you will
+have to change the ports used for the USB connection from PB0 and
+PB2 to PB3 and PB4 respectively. The micronucleus bootloader already
+comes with a configuration suitable for the Digispark named
+t85_default and pre-built binaries in case your controller comes
+without a pre-installed bootloader.
+
+As the AVR Stick is fully open source you can also create your
+own PCBs or simply recreate be necessary circuit on a breadboard
+using the schematics and design files provided at [3].
 
 
-0. Required Hardware
---------------------
+2. Using USB HID feature reports to transmit arbitrary data
+-----------------------------------------------------------
 
-This guide assumes you have a Sparkfun AVR Stick[1] or a compatible
-device.
-At the time of writing the AVR Stick is no longer available from
-Sparkfun directly. There are some vendors who sell compatible clones.
-Alternatively you can use the EAGLE[2] files provided by Sparkfun[3]
-and have your own PCBs manufactures or you can even recreate the
-necessary circuit on a breadboard. See HOWTO.txt for more information
-on the Hardware options.
+If you want to transmit arbitrary data to and from your ATtiny85
+you can use HID feature reports.
 
-In addition to the AVR Stick hardware itself you will need a
-programmer to flash the firmware or at least to initially flash the
-micronucleus bootloader if you choose to use it.
-One option would be to use and Arduino as a programmer for the
-ATtiny[4].
+To do that you will have to enable the following configuration
+options in your usbconfig.h:
+
+  #define USB_CFG_IMPLEMENT_FN_WRITE      1
+  #define USB_CFG_IMPLEMENT_FN_READ       1
+
+In your code you then need to implement the following functions
+that will handle the actual data transfers:
+
+  usbMsgLen_t usbFunctionSetup(uchar data[8]);
+  uchar usbFunctionWrite(uchar *data, uchar len);
+  uchar usbFunctionRead(uchar *data, uchar len);
+
+By periodically calling usbPoll() in your main loop those
+callback functions will be triggered if new data is available.
+
+For detailed examples on how to use this method please refer to
+  apps/HID-RT/src/HID-RT.c
+which implements a simple one-shot bi-directional data transfer, or
+  apps/avrsh/main.cpp
+which implements a pseudo commandline interface over HID reports.
+
+In addition to the target software you will also need a client
+on your Windows or Linux host to talk to your device.
+
+Example clients written in Python using python-libusb1[4] can
+be found at:
+  apps/HID-RT/host/hid-rt.py
+for sending a single command to the HID-RT firmware and at:
+  misc/avrsh/host/avrsh.py
+for the pseudo commandline client for avrsh.
 
 
-1. Setting up the development environment
+3. avrsh on the ATtiny85
+------------------------
+
+apps/avrsh contains a drastically stripped down port of avrsh[5]
+to the ATtiny85.
+
+Even though the functionality is greatly reduced compared to
+the original avrsh, the binary is still to big to fit into the
+ATTiny85's 8k flash together with micronucleus.
+Therefore to use avrsh you need to flash it directly using
+a programmer.
+
+Using misc/avrsh/host/avrsh.py you will then be able to 'log in'
+to your ATtiny85 and issue several interactive command to e.g.
+set and read IO pins or read various system parameters like the
+CPU frequency.
+
+See apps/avrsh/README for more details.
+
+
+4. Creating you own app for the AVR Stick
 -----------------------------------------
 
-To compile the examples avr-gcc and avr-libc are required.
+Generally speaking every firmware compiled for the ATtiny85
+will run on the AVR Stick.
 
-For flashing the firmware we will use avrdude.
+Since the micronucleus bootloader takes up a little less than
+2kB of flash memory if your firmware is larger than about 6kB
+you will not be able to use it together with micronucleus and
+will need to flash it using some other method.
 
-If you want to use an Arduino as a programmer, you will also
-need the Arduino IDE.
+To create an app that takes advantage of the AVR Stick's USB
+interface you need to use the interface provided by V-USB to
+expose the USB functionality.
 
-1.1 Installation on Linux
--------------------------
+This essentially means:
 
-The Arduino IDE (if required) can be downloaded from:
-https://www.arduino.cc/en/Main/Software
+  * Including an appropriate usbconfig.h file.
+  * Linking usbdrv.o usbdrvasm.o oddebug.o from V-USB.
+  * Periodially call usbPoll() in your main loop and implementing
+    the required callbacks.
 
-All the other required software should be available as
-packages from your Linux distribution.
+The easiest way to get started is to copy one of the example
+apps and just add more functionality from there.
 
-On Ubuntu the following command will install the
-necessary packages:
-
- $ sudo apt-get install gcc-avr avr-libc avrdude binutils-avr
-
-
-1.2 Installation on Windows
----------------------------
-
-The Arduino IDE (if required) can be downloaded from:
-https://www.arduino.cc/en/Main/Software
-
-Please see [5] for instructions on how to install the other
-required software on Windows 10.
-
-
-2. Installing the micronucleus bootloader
------------------------------------------
-
-To be able to update the firmware on the AVR Stick without
-needing a separate programmer every time, we are going
-to use the micronucleus[6] bootloader.
-
-
-... tbd ...
+Some good starting points would be:
+ apps/AnyKey
+which implements a basic HID devices that only sends data to
+the host but does not receive data back.
+ apps/HID-RT
+which implements bi-directional communication between the
+host and the target.
 
 
 ---------------------------------------------------------------------
 
 [1]: https://www.sparkfun.com/products/retired/9147
-[2]: https://www.autodesk.com/products/eagle/overview
+[2]: http://digistump.com/products/1
 [3]: https://github.com/sparkfun/AVR_Stick/tree/master/Hardware
-[4]: https://www.arduino.cc/en/Tutorial/ArduinoISP
-[5]: http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html
-[6]: https://github.com/micronucleus/micronucleus
+[4]: https://github.com/vpelletier/python-libusb1
+[5]: https://www.instructables.com/id/AVRSH-A-Command-Interpreter-Shell-for-ArduinoAVR/

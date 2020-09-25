@@ -10,21 +10,49 @@ device.
 See HOWTO.txt for more information on the Hardware options.
 
 In addition to the AVR Stick hardware itself you will need a
-programmer to initially flash the micronucleus bootloader.
+programmer to initially flash the micronucleus[2] bootloader.
 
 
 1. Required Software
 --------------------
 
-To compile the examples an AVR GCC toolchain is required.
+To compile the examples avr-gcc[3] and avr-libc are required.
 
-For flashing the firmware we will use avrdude.
+If you want to use an Arduino as a programmer, you will also
+need the Arduino IDE. See [4] for detailed instruction on
+how to do that.
+For flashing the firmware we will use avrdude[5] which is
+included with the Arduino IDE or can be installed separately
+if you wish.
 
-On Linux libusb-0.1 is required to build the micronucleus
-command line tool.
+For the host tools libusb1[6] is required and since the
+micronucleus commandline tool still uses libusb-0.1 the
+compatibility package libusb-compat-0.1[7] might be needed, too.
 
-This guide uses an Arduino as a programmer[2], therefore you will
-also need the Arduino IDE.
+
+1.1 Installation on Linux
+-------------------------
+
+The Arduino IDE (if required) can be downloaded from:
+https://www.arduino.cc/en/Main/Software
+
+All the other required software should be available as
+packages from your Linux distribution.
+
+On Ubuntu the following command will install the
+necessary packages:
+
+ $ sudo apt-get install gcc-avr avr-libc avrdude binutils-avr libusb-1.0-0-dev
+
+
+1.2 Installation on Windows
+---------------------------
+
+The Arduino IDE (if required) can be downloaded from:
+https://www.arduino.cc/en/Main/Software
+
+Please see [8] for instructions on how to install the AVR
+GCC toolchain on Windows 10 and [4] on how to install libusb.
 
 
 2. Getting the sources
@@ -55,7 +83,7 @@ This command should leave you with the compiled bootloader in the
 file 'AVR_Stick_Apps/submodules/micronucleus/firmware/main.hex'.
 
 
-2. Installing the micronucleus bootloader
+4. Installing the micronucleus bootloader
 -----------------------------------------
 
 First we need to set the fuses of the ATtiny85 correctly.
@@ -71,7 +99,7 @@ After that we can flash the actual bootloader:
  $ avrdude -p attiny85 -b 19200 -c arduino -P /dev/ttyUSB0 -U flash:w:main.hex
 
 
-3. Building the USBSlacker app
+5. Building the USBSlacker app
 ------------------------------
 
  $ cd AVR_Stick_Apps
@@ -92,7 +120,7 @@ Now you should have the compiled binary for the app in
 AVR_Stick_Apps/apps/USBSlacker/src/USBSlacker.hex
 
 
-4. Building the micronucleus command line tool
+6. Building the micronucleus command line tool
 ----------------------------------------------
 
 On Windows you can skip this step as micronucleus comes
@@ -108,7 +136,7 @@ This results in the following file:
 AVR_Stick_Apps/submodules/micronucleus/commandline/micronucleus
 
 
-5. Flashing the app using micronucleus
+7. Flashing the app using micronucleus
 --------------------------------------
 
 Now you have all the necessary components to flash the newly built
@@ -144,7 +172,7 @@ After 5 seconds the AVR Stick will automatically reboot into the newly
 flashed app.
 
 
-6. Enjoy
+8. Enjoy
 --------
 
 At this point you have successfully turned your AVR Stick into an
@@ -157,4 +185,10 @@ dive into HOWTO.txt to find out how to create your own ones.
 ---------------------------------------------------------------------
 
 [1]: https://www.sparkfun.com/products/retired/9147
-[2]: https://www.arduino.cc/en/Tutorial/ArduinoISP
+[2]: https://github.com/micronucleus/micronucleus
+[3]: https://gcc.gnu.org/wiki/avr-gcc
+[4]: https://www.arduino.cc/en/Tutorial/ArduinoISP
+[5]: https://www.nongnu.org/avrdude/
+[6]: https://libusb.info/
+[7]: https://github.com/hjelmn/libusb-compat-0.1
+[8]: http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html
