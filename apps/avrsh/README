@@ -1,1 +1,141 @@
-... tbd ...
+avrsh
+=====
+
+avrsh is a port of Barry Gian James' avrsh to the ATTiny85
+that was extended to accept input via HID reports instead
+of a UART.
+
+The original avrsh can be found at:
+https://www.instructables.com/id/AVRSH-A-Command-Interpreter-Shell-for-ArduinoAVR/
+
+
+Constraints
+-----------
+
+Since the original avrsh was designed for the ATmega328 which has
+32kB of flash memory and may more peripherals than the ATtiny85
+a lot of features had to be removed to fit into the smaller 8kB
+and to account for some of the missing hardware.
+
+Among others the interactive help command has been removed to
+save the space that the help texts would have used.
+
+For a list of available commands please refer to the Usage
+section below.
+
+
+Hardware
+--------
+
+The app runs on an unmodified AVR Stick. The functionality
+is implemented entirely in software and no additional
+hardware is required.
+
+
+Firmware
+--------
+
+The Firmware uses a vendor specific HID descriptor that defines
+a single report with a length of 128 bytes to emulate a commandline
+interface similar to the way the original avrsh used the UART.
+
+See also the HID-RT app for a description of how this interface
+works.
+
+A pre-compiled binary for the AVR Stick can be fount
+at avrsh/avrsh.hex.
+
+To compile the firmware yourself simply run make in the HID-RT
+directory:
+
+ $ make
+
+   ... compiler output omitted ...
+
+   Size after:
+   AVR Memory Usage
+   ----------------
+   Device: attiny85
+   
+   Program:    7704 bytes (94.0% Full)
+   (.text + .data + .bootloader)
+   
+   Data:        309 bytes (60.4% Full)
+   (.data + .bss + .noinit)
+
+
+Flashing the firmware
+---------------------
+
+Since avrsh takes up almost all of the ATtiny85's flash memory
+there is no space left for a bootloater.
+Therefore the firmware has to be flashed using an external
+programmer.
+
+Using avrdude and an Arduino as an ISP this can be achieved
+with the following command:
+
+  $ avrdude -p attiny85 -b 19200 -c arduino -P /dev/ttyUSB0 -U flash:w:avrsh.hex
+
+
+Commandline tool
+----------------
+
+To send requests to the AVR Stick the Python script
+AVR_Stick_Apps/misc/avrsh/host/avrsh.py
+is used.
+
+  $ python misc/avrsh/host/avrsh.py
+  > fcpu
+  CPU Freq: 16500000
+  >
+
+The tool can be exited by pressing either CTRL-C or CTRL-D.
+
+
+Usage
+-----
+
+ write <pin> [high|low]              Write to a digital pin
+ set   [<pin> [input|output]]        Set a pin for output or input
+ read [<pin>|lfuse|hfuse|efuse|lock|calibration|signature]
+ fcpu                                Get the CPU speed
+
+
+Examples
+--------
+
+Turning on a LED on the AVR Stick:
+
+  > set pin PB3 output
+  Set PB3 for output
+  > write pin PB3 high
+  Wrote logic high to pin PB3
+
+... and turning it off again:
+  > write pin PB3 low
+  Wrote logic low to pin PB3
+
+Reading a value from the AVR Sticks free input pin:
+
+  > set pin PB5 input
+  Set PB5 for input
+  > read pin PB5
+  Pin: PB5 is LOW
+
+Reading the current CPU frequency:
+
+  > fcpu
+  CPU Freq: 16500000
+
+Various other read commands:
+
+  > read lfuse
+  Lower Fuse: 0xe1
+  > read hfuse
+  High Fuse: 0xdd
+  > read efuse
+  Extended Fuse: 0xfe
+  > read lock
+  Lock Bits: 0xff
+
