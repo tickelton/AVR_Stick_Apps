@@ -1,0 +1,72 @@
+HID-RT
+======
+
+HID-RT demonstrates how to use USB HID feature reports for
+bi-directional transfer of arbitrary data.
+
+The firmware receives a HID report with a length of up
+to 128 bytes. Depending on the contents of the report
+it either responds with a response report or ignores the
+report.
+
+Since the only purpose of this app is to demonstrate
+how to use HID reports in this way it implements no
+useful functionality but will only act as follows:
+
+* If the request starts with the string 'foo' it will
+  send the response 'bar'.
+* If the request starts with the string 'blafasel' it will
+  send the response 'foobar'.
+* All other requests will be ignored.
+
+
+Hardware
+--------
+
+The app runs on an unmodified AVR Stick. The functionality
+is implemented entirely in software and no additional
+hardware is required.
+
+
+Firmware
+--------
+
+The Firmware uses a vendor specific HID descriptor that defines
+a single report with a length of 128 bytes.
+
+A pre-compiled binary for the AVR Stick can be fount
+at src/HID-RT.hex.
+
+To compile the firmware yourself simply run make in the HID-RT
+directory:
+
+ $ make
+
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c usbdrv/usbdrv.c -o usbdrv/usbdrv.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -x assembler-with-cpp -c usbdrv/usbdrvasm.S -o usbdrv/usbdrvasm.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c usbdrv/oddebug.c -o usbdrv/oddebug.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c src/HID-RT.c -o src/HID-RT.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -o src/HID-RT.elf usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o src/HID-RT.o
+   rm -f src/HID-RT.hex
+   avr-objcopy -j .text -j .data -O ihex src/HID-RT.elf src/HID-RT.hex
+   avr-size --format=avr --mcu=attiny85 src/HID-RT.elf
+   AVR Memory Usage
+   ----------------
+   Device: attiny85
+   
+   Program:    2270 bytes (27.7% Full)
+   (.text + .data + .bootloader)
+   
+   Data:        147 bytes (28.7% Full)
+   (.data + .bss + .noinit)
+
+
+Commandline tool
+----------------
+
+To send requests to the AVR Stick the Python script host/hid-rt.py
+is used.
+
+  $ python hid-rt.py foo
+    Received: "bar"
+
