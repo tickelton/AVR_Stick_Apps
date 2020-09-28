@@ -1,0 +1,38 @@
+TinyLigh
+========
+
+A USB enabled flashlight based on a ATtiny85 and a high power LED.
+
+
+Hardware
+--------
+
+AVR Stick with a high power LED consisting of 3 LEDs i an single
+package connectd to PBx, PBx and PBx
+
+
+Firmware
+--------
+
+The Firmware uses a vendor specific HID descriptor that defines
+a single report with a length of one bytes that is used to
+enable and disable the individual LEDs.
+
+A pre-compiled binary for the AVR Stick can be fount
+at src/TinyLight.hex.
+
+To compile the firmware yourself simply run make in the TinyLight
+directory:
+
+ $ make
+
+   ...
+
+Commandline tool
+----------------
+
+To send requests to the AVR Stick the Python script host/tinylight.py
+is used.
+
+  $ python tinylight.py 1
+
