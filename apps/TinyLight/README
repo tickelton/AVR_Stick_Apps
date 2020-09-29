@@ -26,13 +26,30 @@ directory:
 
  $ make
 
-   ...
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c usbdrv/usbdrv.c -o usbdrv/usbdrv.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -x assembler-with-cpp -c usbdrv/usbdrvasm.S -o usbdrv/usbdrvasm.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c usbdrv/oddebug.c -o usbdrv/oddebug.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c src/TinyLight.c -o src/TinyLight.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -o src/TinyLight.elf usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o src/TinyLight.o
+   rm -f src/TinyLight.hex
+   avr-objcopy -j .text -j .data -O ihex src/TinyLight.elf src/TinyLight.hex
+   avr-size --format=avr --mcu=attiny85 src/TinyLight.elf
+   AVR Memory Usage
+   ----------------
+   Device: attiny85
+   
+   Program:    1934 bytes (23.6% Full)
+   (.text + .data + .bootloader)
+   
+   Data:         58 bytes (11.3% Full)
+   (.data + .bss + .noinit)
 
-Commandline tool
+
+Host tool
 ----------------
 
-To send requests to the AVR Stick the Python script host/tinylight.py
-is used.
+A Python GUI tool is used to send requests to the AVR Stick and toggle
+through the different brightness modes:
 
-  $ python tinylight.py 1
+  $ python tinylight.py
 
