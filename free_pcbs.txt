@@ -1,0 +1,75 @@
+How to get a free AVR Stick PCB
+===============================
+
+See below for English instructions.
+
+Wie das heutzutage eben so ist, ist es guenstiger 50 Platinen
+fertigen zu lassen, als 5.
+Daher habe ich noch ca. 45 der AVR Stick Platinen uebrig,
+wie hier zu sehen:
+https://gitlab.com/tickelton/avr_stick_apps/-/blob/master/images/AVR_Stick_PCBs.jpg
+
+Die Platinen wurden nach den original Design Dateien von Sparkfun
+gefertigt, die hier zu finden sind:
+https://github.com/sparkfun/AVR_Stick/tree/master/Hardware
+
+Wer zwei Platinen gratis zugeschickt bekommen moechte,
+moege sich bitte per Email an mich wenden.
+
+Hier die Bedingungen:
+- Versand per Post Brief nur an Adressen in Deutschland, da sonst
+  die Versandkosten den Wert der Platinen um ein vielfaches
+  uebersteigen.
+- Es geht ausschliesslich um die blanken Platinen. Unbestueckt und
+  ohne die Komponenten, die zur Fertigstellung noetig sind.
+  Eine Stueckliste der noetigen Komponenten mit Reichelt
+  Bestellnummern findet sich weiter unten.
+- Da es sich hier um ein Angebot von privat an privat handelt
+  gibt es keinerlei Garantie, Gewaehrleistung oder Zusicherung
+  von Funktionsfaehigkeit.
+
+
+---------------
+
+Since it is nowadays cheaper to have 50 PCBs made that to have
+5 made I am currently sitting on a pile of about 45 spare AVR
+Stick PCBs as can be seen here:
+https://gitlab.com/tickelton/avr_stick_apps/-/blob/master/images/AVR_Stick_PCBs.jpg
+
+The boards were manufactured using the original AVR Stick design
+files provided by Sparkfun here:
+https://github.com/sparkfun/AVR_Stick/tree/master/Hardware
+
+If you would like to receive two free PCBs by mail feel free
+to contact me by email.
+
+Here are the conditions:
+- The PCBs are shipped as Deutsche Post Letter to German
+  postal addresses only! Otherwise the cost of shipping
+  would exceed the value of the PCBs by orders of magnitude.
+- You will only receive the unpopulated PCBs without the
+  components required for a working AVR Stick.
+  A Bill of materials listing the necessary components
+  can be found below.
+- Since this is an offer by a private party to other
+  private parties it comes with no warranty, liability
+  or even implied fitness for any purpose.
+
+
+-----------------
+
+
+Bill of Materials:
+
+Reichelt Part No. | Description                    | amount required 
+====================================================================
+X7R-G0603 100N    |  SMD-Capacitor 0603 100nF      |    4
+RND 0603 1 1,5K   |  SMD-Resistor, 0603, 1,5 kOhm  |    1
+RND 0603 1 68     |  SMD-Resistor, 0603, 68 Ohm    |    2
+RND 135-00180     |  LED, SMD, 0603, blue          |    2
+RND 135-00182     |  LED, SMD, 0603, yellow        |    2
+RND 0603 1 470    |  SMD-Resistor, 0603, 470 Ohm   |    2
+ATTINY 85-20 SU   |  ATtiny85 Mikrocontroller      |    1
+T491A 10U 16      |  SMD-Tantaum Capacitor, 10uF   |    1
+
+

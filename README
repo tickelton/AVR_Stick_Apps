@@ -1,6 +1,11 @@
 AVR_Stick_Apps
 ==============
 
+ATTENTION: FREE PCBS !!!
+If you want to find out how to get them check out free_pcbs.txt
+There's one catch, tough: You need a German postal address.
+
+
 AVR_Stick_Apps is intended to be a showcase for V-USB[1] on the Atmel
 ATtiny85[2], in particular as used in the Sparkfun AVR Stick[3].
 
