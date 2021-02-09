@@ -1,0 +1,64 @@
+SelfResetr
+==========
+
+SelfReset demonstrates how to reset a device entirely in
+software without any physical interaction.
+
+Usually to reset the device, e.g. when performing a
+firmware update using micronucleus, it is necessary
+to unplug and re-plug the device or use a physical
+reset button.
+This can be cumbersome on cases where the device
+is not easily reachable.
+
+Here we use a software watchdog to reset the device.
+In normal operation the watchdog is triggered
+periodically so that the firmware will continue
+it's regular operation.
+
+Once a software reset is initiated the watchdog
+update is deactivated so that a reset is triggered
+by the watchdog.
+
+
+Hardware
+--------
+
+The app runs on an unmodified AVR Stick. The functionality
+is implemented entirely in software and no additional
+hardware is required.
+
+
+Firmware
+--------
+
+The Firmware uses a vendor specific HID descriptor that defines
+a single report with a length of one bytes that is used to
+set a global flag that triggers a reset.
+
+A pre-compiled binary for the AVR Stick can be fount
+at src/SelfReset.hex.
+
+To compile the firmware yourself simply run make in the SelfReset
+directory:
+
+ $ make
+
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c usbdrv/usbdrv.c -o usbdrv/usbdrv.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -x assembler-with-cpp -c usbdrv/usbdrvasm.S -o usbdrv/usbdrvasm.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c usbdrv/oddebug.c -o usbdrv/oddebug.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -c src/SelfReset.c -o src/SelfReset.o
+   avr-gcc -Wall -Os -I../../submodules/v-usb/usbdrv -Isrc -DF_CPU=16500000 -mmcu=attiny85 -o src/SelfReset.elf usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o src/SelfReset.o
+   rm -f src/SelfReset.hex
+   avr-objcopy -j .text -j .data -O ihex src/SelfReset.elf src/SelfReset.hex
+   avr-size --format=avr --mcu=attiny85 src/SelfReset.elf
+   AVR Memory Usage
+   ----------------
+   Device: attiny85
+   
+   Program:    2026 bytes (24.7% Full)
+   (.text + .data + .bootloader)
+   
+   Data:         75 bytes (14.6% Full)
+   (.data + .bss + .noinit)
+

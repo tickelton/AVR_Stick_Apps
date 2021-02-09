@@ -65,6 +65,11 @@ AVR_Stick_Apps
 |  |             set up a command line interface over HID feature
 |  |             reports.
 |  |
+|  |
+|  |-SelfReset:  Demonstrates how a watchdog can be used to reset
+|  |             the device without any physical interaction, e.g.
+|  |             to initiate a firmware update.
+|  |
 |  \_USBSlacker: Simulates a USB mouse that is moved every couple
 |                of minutes so your status in all your collaboration
 |                apps stays on active and your boss doesn't see that
